@@ -1,1 +1,0 @@
-# yk-ipad-app
