@@ -1,5 +1,5 @@
 importScripts('./release-state.js');
-const VERSION='3.1.0',CACHE='otetsudai-offline-v'+VERSION;
+const VERSION='3.2.0',CACHE='otetsudai-offline-v'+VERSION;
 const ASSETS=['./index.html','./app.js','./local-store.js','./growth.js','./growth.css','./release-state.js','./update.js','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>event.waitUntil((async()=>{
  const active=await ReleaseState.get('activeVersion');
