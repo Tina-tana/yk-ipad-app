@@ -1,11 +1,11 @@
 importScripts('./release-state.js');
-const VERSION='3.0.0',CACHE='otetsudai-offline-v'+VERSION;
+const VERSION='3.1.0',CACHE='otetsudai-offline-v'+VERSION;
 const ASSETS=['./index.html','./app.js','./local-store.js','./growth.js','./growth.css','./release-state.js','./update.js','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>event.waitUntil((async()=>{
  const active=await ReleaseState.get('activeVersion');
  if(active&&active!==VERSION&&await ReleaseState.get('approvedVersion')!==VERSION)throw Error('Update needs approval');
  const cache=await caches.open(CACHE);
- try{await cache.addAll(ASSETS.map(path=>new Request(new URL(path,self.registration.scope),{cache:'reload'})))}catch(e){await caches.delete(CACHE);throw e}
+ try{await cache.addAll(ASSETS.map(path=>new Request(new URL(path,self.registration.scope),{cache:'reload',credentials:'same-origin',redirect:'error'})))}catch(e){await caches.delete(CACHE);throw e}
  // Later releases are approved before installation, not forced into open pages.
 })()));
 self.addEventListener('activate',event=>event.waitUntil((async()=>{
@@ -21,6 +21,7 @@ self.addEventListener('message',event=>{
 });
 self.addEventListener('fetch',event=>{
  const url=new URL(event.request.url);if(event.request.method!=='GET'||url.origin!==self.location.origin||!url.pathname.startsWith(new URL(self.registration.scope).pathname))return;
+ if(url.pathname===new URL('./family-login',self.registration.scope).pathname)return;
  if(url.pathname===new URL('./release.json',self.registration.scope).pathname)return;
  event.respondWith((async()=>{const cache=await caches.open(CACHE);if(event.request.mode==='navigate')return await cache.match(new URL('./index.html',self.registration.scope).href)||Response.error();return await cache.match(event.request)||fetch(event.request)})());
 });
